@@ -1,12 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-import { expect } from 'vitest';
+import { expect, vi } from 'vitest';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
     }).compileComponents();
+
+    vi.useFakeTimers()
   });
 
   it('should create the app', () => {
@@ -27,4 +29,23 @@ describe('AppComponent', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Hello, angular-vitest');
   });
+
+  it('should test timeout example', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    app.timeoutExample();
+    vi.runAllTimers();
+    expect(app.personName).toEqual('Ludimyla');
+  })
+
+  it('should test async example', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+
+    let result = app.asyncExample();
+    vi.runAllTimers();
+    const finalResult = await result;
+    
+    expect(finalResult).equals('Passou pelo sleep');
+  })
 });
